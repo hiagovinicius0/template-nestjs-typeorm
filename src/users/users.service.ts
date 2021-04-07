@@ -11,16 +11,27 @@ export class UsersService {
     @Inject('USERS_REPOSITORY') private usersRepository: Repository<Users>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    throw new BadRequest('Usuário já cadastrado!');
+  async create(createUserDto: CreateUserDto) {
+    const findUser = await this.searchEmail(createUserDto.email);
+    if (typeof findUser !== 'undefined') throw new BadRequest('Usuário criado');
+    const user = this.usersRepository.create({
+      name: createUserDto.name,
+      email: createUserDto.email,
+    });
+    await this.usersRepository.save(user);
+    return user;
   }
 
   async findAll(): Promise<Users[]> {
     return this.usersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return await this.usersRepository.findOne(id);
+  }
+
+  async searchEmail(email: string) {
+    return await this.usersRepository.findOne({ where: { email } });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
