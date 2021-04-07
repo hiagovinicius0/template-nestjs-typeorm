@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { BadRequest } from 'src/error/badRequest.exception';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,7 +12,7 @@ export class UsersService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    throw new BadRequest('Usuário já cadastrado!');
   }
 
   async findAll(): Promise<Users[]> {
